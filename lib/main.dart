@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:foodrecipe/recipe_onboarding.dart';
+import 'package:foodrecipe/views/recipe_onboarding.dart';
 
 void main() {
   runApp(const MyApp());
