@@ -1,7 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:foodrecipe/constants/constants.dart';
+import 'package:foodrecipe/models/categories_recipe.dart';
 import 'package:foodrecipe/models/recipe_models.dart';
+import 'package:foodrecipe/widgets/chef_card.dart';
+import 'package:foodrecipe/widgets/menu_selector.dart';
+import 'package:foodrecipe/widgets/recipe_card.dart';
+import 'package:foodrecipe/widgets/search_field.dart';
+import 'package:foodrecipe/widgets/section_header.dart';
 
 class HomeScreenRecipe extends StatefulWidget {
   const HomeScreenRecipe({super.key});
@@ -11,172 +16,128 @@ class HomeScreenRecipe extends StatefulWidget {
 }
 
 class _HomeScreenRecipeState extends State<HomeScreenRecipe> {
-  int selectedIndex = 0;
+  int selectedMenu = 0;
   int selectedPage = 0;
-  List<IconData> icons = [
-    Icons.home,
-    Icons.bar_chart_rounded,
-    Icons.favorite,
-    Icons.person_outline_rounded,
-  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: recipeAppBackgroundColor,
+
       body: SafeArea(
-        child: Column(
+        child: ListView(
           children: [
-            headerParts(),
-            const SizedBox(height: 30),
-            searchField(),
-            const SizedBox(height: 40),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Popular menus",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                    ), // TextStyle
-                  ), //Text
-                  Text(
-                    "See all",
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.green,
-                      fontWeight: FontWeight.w500,
-                    ), // TextStyle
-                  ), //Text
-                ],
-              ), // Row
-            ), // Padding
             const SizedBox(height: 20),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  ...List.generate(
-                    menuItems.length,
-                    (index) => Padding(
-                      padding: EdgeInsets.only(left: 20),
-                      child: GestureDetector(
-                        onTap: () {},
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 15,
-                            vertical: 7,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            gradient: LinearGradient(
-                              colors: [
-                                selectedIndex == index
-                                    ? Colors.green
-                                    : Colors.white,
-                                selectedIndex == index
-                                    ? Colors.greenAccent
-                                    : Colors.white,
-                              ],
-                            ), // LinearGradient
-                          ), // BoxDecoration
-                          child: Text(
-                            menuItems[index],
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: selectedIndex == index
-                                  ? FontWeight.bold
-                                  : FontWeight.w500,
-                              color: selectedIndex == index
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                          ),
-                        ), // Container
-                      ), // GestureDetector
-                    ), // Padding
-                  ), // List.Generate
-                ],
-              ), // Row
-            ), // SingleChildScrollView
-          ],
-        ), // Column
-      ), // SafeArea
-    );
-  }
 
-  Padding searchField() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(20)),
-          color: searchBarColor,
-        ),
-        child: const TextField(
-          decoration: InputDecoration(
-            hintText: "Search recipes...",
-            hintStyle: TextStyle(color: Colors.black26),
-            contentPadding: EdgeInsets.symmetric(vertical: 15),
-            prefixIcon: Icon(Icons.search, color: Colors.black45),
-            border: InputBorder.none,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Padding headerParts() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          const Expanded(
-            child: Text.rich(
-              TextSpan(
-                children: [
-                  TextSpan(text: "Hello, \n", style: TextStyle(fontSize: 16)),
-                  TextSpan(
-                    text: "What do you want to eat today?",
-                    style: TextStyle(fontSize: 13, color: Colors.black45),
-                  ),
-                ],
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                "Hello 👋",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Stack(
-            children: [
-              const CircleAvatar(
-                radius: 20,
-                backgroundColor: Colors.white,
-                backgroundImage: NetworkImage(
-                  "https://static.vecteezy.com/system/resources/thumbnails/032/176/191/small/business-avatar-profile-black-icon-man-of-user-symbol-in-trendy-flat-style-isolated-on-male-profile-people-diverse-face-for-social-network-or-web-vector.jpg",
-                ),
+
+            const SizedBox(height: 20),
+
+            const SearchField(),
+
+            const SizedBox(height: 30),
+
+            const SectionHeader(title: "Popular menus"),
+
+            const SizedBox(height: 15),
+
+            MenuSelector(
+              selectedIndex: selectedMenu,
+              onTap: (index) {
+                setState(() {
+                  selectedMenu = index;
+                });
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            SizedBox(
+              height: 260,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: recipeItems.length,
+                itemBuilder: (context, index) {
+                  final recipe = recipeItems[index];
+
+                  return RecipeCard(recipe: recipe, index: index);
+                },
               ),
-              const Positioned(
-                right: 1,
-                top: 1,
-                child: SizedBox(
-                  height: 9,
-                  width: 9,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      shape: BoxShape.circle,
-                      border: Border.fromBorderSide(
-                        BorderSide(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+
+            const SizedBox(height: 40),
+
+            const SectionHeader(title: "Categories"),
+
+            const SizedBox(height: 10),
+            categoryItems(),
+            const ChefCard(),
+          ],
+        ),
+      ),
+
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: selectedPage,
+        onTap: (index) {
+          setState(() {
+            selectedPage = index;
+          });
+        },
+        selectedItemColor: Colors.green,
+        unselectedItemColor: Colors.grey,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: ""),
+          BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: ""),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: ""),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: ""),
         ],
       ),
+    );
+  }
+
+  SingleChildScrollView categoryItems() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(
+          recipeCategory.length,
+          (index) => Padding(
+            padding: index == 0
+                ? EdgeInsets.only(left: 20, right: 20)
+                : EdgeInsets.only(right: 20),
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 33,
+                  backgroundColor: recipeCategory[index].color,
+                  child: Image.asset(
+                    recipeCategory[index].image,
+                    height: 40,
+                    width: 40,
+                  ),
+                ), // CircleAvatar
+                SizedBox(height: 5),
+                Text(
+                  recipeCategory[index].name,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ), // TextStyle
+                ), // Text
+              ],
+            ), // Column
+          ), // Padding
+        ),
+      ), // Row
     );
   }
 }

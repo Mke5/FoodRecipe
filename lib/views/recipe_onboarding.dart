@@ -77,7 +77,7 @@ class _RecipeOnboardingScreenState extends State<RecipeOnboardingScreen> {
                       height: 55,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        gradient: gradientGreen, // from constants.dart
+                        gradient: gradientGreen,
                       ),
                       child: const Center(
                         child: Text(
